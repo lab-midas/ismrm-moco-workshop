@@ -6,7 +6,7 @@ In this hands-on of the [ISMRM Workshop on Motion Detection and Correction 2022]
 
 Supporting codebase and data for motion correction are supplied in this repository. Python codes are provided to execute and experiment with different motion correction strategies inside a Jupyter notebook:
 - [Jupyter Notebook](https://github.com/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb)
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb)
+- <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 
 ## Syllabus
