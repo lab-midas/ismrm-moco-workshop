@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import medutils
+from utils.mri import minmaxscale
 
 
 def plot_quiver(ax, flow, spacing, scale=1, margin=0, **kwargs):
@@ -48,6 +49,7 @@ def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figs
     # kwargs     quiver kwargs (default: angles="xy", scale_units="xy")
 
     if isinstance(img, list):
+        img = [minmaxscale(x, [0, 1]) for x in img]
         img = np.stack(img, -1)
 
     if np.iscomplex(img).any():
