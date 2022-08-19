@@ -118,7 +118,7 @@ def flow_to_color(flow_uv, clip_flow=None, convert_to_bgr=False):
     return flow_compute_color(u, v, convert_to_bgr)
 
 
-def plot_flow(flow_uv, title='',clip_flow=None, convert_to_bgr=False, figsize=None):
+def plot_flow(flow_uv, title='', clip_flow=None, convert_to_bgr=False, figsize=None):
     # flow_uv           [H,W,2] or list of 2D flow components [ux, uy]
     # title             string, list of strings
     # clip_flow         float, maximum clipping value for flow
@@ -143,6 +143,8 @@ def plot_flow(flow_uv, title='',clip_flow=None, convert_to_bgr=False, figsize=No
         ax = fig.add_subplot(M, N, idx + 1)
         if isinstance(title, list):
             ax.set_title(title[idx])
+        else:
+            ax.set_title(title)
         ax.axis('off')
         ax.set_aspect('equal')
         if len(np.shape(flow_uv)) > 3:
