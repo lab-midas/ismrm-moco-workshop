@@ -12,6 +12,10 @@ def minmaxscale(x, scale):
   return ((x-np.amin(x)) * (scale[1]-scale[0]))/(np.amax(x) - np.amin(x))
 
 
+def maxscale(img):
+  return img/np.amax(np.abs(img))
+
+
 # Cartesian 2D operators
 def mriAdjointOp(kspace, smaps, mask):
   return np.sum(ifft2c(kspace * mask)*np.conj(smaps), axis=-1)
