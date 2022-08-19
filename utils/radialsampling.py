@@ -131,6 +131,33 @@ def compute_radial_dcf(Kpos):
     return dcf.reshape((1, *dcf.shape))
 
 
+def prepare_radial(acc, nRead, nSlices=1):
+    """
+    :param acc:         acceleration factor
+    :param nRead:       number of readout steps
+    :param nSlices:     number of slices
+    :return:            radial trajectory, density compensation function
+    """
+    nyquist_spokes = np.round(np.pi / 2 * nRead)
+
+    if acc > 1:
+        n_spokes = int(np.round(nyquist_spokes / acc))
+    else:
+        n_spokes = int(nyquist_spokes)
+    startangle = 0
+    kpos = get_kpos(nRead, n_spokes, 'golden', startangle)
+    dcf = compute_radial_dcf(kpos)
+    dcf = dcf * nRead * np.pi
+
+    kpos = np.tile(kpos.reshape(1, -1, nRead * n_spokes), (nSlices, 1, 1))
+    dcf = np.tile(dcf.reshape(1, 1, nRead * n_spokes) / np.max(dcf), (nSlices, 1, 1))
+
+    kpos = np.transpose(kpos[0, ...], (1, 0))
+    #mask_rad = convert_locations_to_mask(kpos, (nRead, nRead))
+    dcf = np.transpose(dcf[0, ...], (1, 0))
+    return kpos, dcf
+
+
 def subsample_radial(img_cart, smaps=None, acc=1, cphases=[0]):
     # return radial subsampled image
 
