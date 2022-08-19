@@ -33,14 +33,19 @@ def plot_quiver(ax, flow, spacing, scale=1, margin=0, **kwargs):
 
 
 def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figsize=None, **kwargs):
-    # img        to be plotted image or list of 2D images
+    # img        ndarray, list: to be plotted image or list of 2D images
     #            2D: single 2D image
     #            3D: third dimension is plotted side-by-side
-    # flow       2D: [x, y, flowDir]
+    # flow       ndarray, list: to be plotted flow or list of 2D flows
+    #            2D: [x, y, flowDir]
     #            3D: [x, y, slices, flowDir]
     #            flowDir being the x and y components of the flow
     # permorder  (rank > 2): move any dimension in the side-by-side plotting order
-    # title      plotting title
+    # title      string, list of strings: plotting title
+    # spacing    space (px) between each arrow in grid
+    # scale      scale factor for flow vectors
+    # figsize    figure size (width, height)
+    # kwargs     quiver kwargs (default: angles="xy", scale_units="xy")
 
     if isinstance(img, list):
         img = np.stack(img, -1)
@@ -64,6 +69,8 @@ def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figs
             figsize = (10, 10) if figsize is None else figsize
             medutils.visualization.imshow(img, title=title, figsize=figsize)
     else:
+        if isinstance(flow, list):
+            flow = np.stack(flow, -1)
         figsize = (10, 10) if figsize is None else figsize
         fig, axs = plt.subplots(M, N, figsize=(M * figsize[0], N * figsize[1]))
         # nvec = 20  # Number of vectors to be displayed along each image dimension
@@ -81,4 +88,6 @@ def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figs
             # ax.quiver(x, y, u_[..., idx], v_[..., idx], color='y', units='dots',
             #     angles='xy', scale_units='xy', lw=3)
             ax.set_axis_off()
+            if isinstance(title, list):
+                ax.set_title(title[idx])
         plt.show()

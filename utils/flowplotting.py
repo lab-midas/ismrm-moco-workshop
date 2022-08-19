@@ -119,11 +119,37 @@ def flow_to_color(flow_uv, clip_flow=None, convert_to_bgr=False):
 
 
 def plot_flow(flow_uv, title='',clip_flow=None, convert_to_bgr=False, figsize=None):
-    flow_img = flow_to_color(flow_uv, clip_flow=None, convert_to_bgr=False)
+    # flow_uv           [H,W,2] or list of 2D flow components [ux, uy]
+    # title             string, list of strings
+    # clip_flow         float, maximum clipping value for flow
+    # convert_to_bgr    bool, whether to change ordering and output BGR instead of RGB
+    # figsize           tuple, figure size (width, height)
+    if isinstance(flow_uv, list):
+        flow_uv = np.stack(flow_uv, axis=-1)
+
+    Nmax = 8
+    if len(np.shape(flow_uv)) > 3:
+        M = int(np.ceil(np.shape(flow_uv)[-1] / Nmax))
+        if M > 1:
+            N = int(Nmax)
+        else:
+            N = int(np.shape(flow_uv)[-1])
+    else:
+        M = 1
+        N = 1
     figsize = (10, 10) if figsize is None else figsize
     fig = plt.figure(figsize=figsize)
-    ax = fig.add_subplot(1, 1, 1)
-    ax.imshow(flow_img)
-    ax.set_axis_off()
-    plt.title(title)
-    plt.show()
+    for idx in range(M * N):
+        ax = fig.add_subplot(M, N, idx + 1)
+        if isinstance(title, list):
+            ax.set_title(title[idx])
+        ax.axis('off')
+        ax.set_aspect('equal')
+        if len(np.shape(flow_uv)) > 3:
+            flow_uv_ = flow_uv[:, :, :, idx]
+        else:
+            flow_uv_ = flow_uv
+        if clip_flow is not None:
+            flow_uv_ = np.clip(flow_uv_, 0, clip_flow)
+        flow_img = flow_to_color(flow_uv_, clip_flow, convert_to_bgr)
+        ax.imshow(flow_img)
