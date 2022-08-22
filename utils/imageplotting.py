@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import medutils
-from utils.mri import minmaxscale
+from utils.mri import minmaxscale, maxscale
 
 
 def plot_quiver(ax, flow, spacing, scale=1, margin=0, **kwargs):

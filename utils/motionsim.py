@@ -1,6 +1,7 @@
 import numpy as np
 from utils.mri import mriForwardOp
 import SimpleITK as sitk
+import matplotlib.pyplot as plt
 
 
 def simulate_motion(img_cc, smaps, mask, p):
@@ -11,6 +12,7 @@ def simulate_motion(img_cc, smaps, mask, p):
     #             b) affine motion course (time-dependent or time-constant), nPE x 6
     #             np.abs(p[:, :5]) > 0 = mask_motion; time points of phase-encoding steps
     #             at which motion parameters > 0 are defined, i.e. motion is happening
+    # return:     motion-affected k-space, motion mask
 
     kspace = mriForwardOp(img_cc, smaps, mask)
     p = np.asarray(p)
@@ -31,6 +33,30 @@ def simulate_motion(img_cc, smaps, mask, p):
         for ky in np.arange(np.shape(img_cc)[1]):
             kspace_aff[:, ky, :] = mriForwardOp(transform_img(img_cc, p[ky, :]), smaps, mask)[:, ky, :]
         return kspace_aff, mask_motion
+
+
+def plot_motion_course(motion_course, TR=1):
+    # motion_course     temporal variation of motion, i.e. temporal course of motion parameters, shape: [motion_parameters, total_time]
+    # TR                repetition time [ms]
+    time = np.arange(np.shape(motion_course)[0]) * TR
+
+    fig = plt.figure(figsize=(20, 10))
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twiny()
+    for icourse in np.arange(np.shape(motion_course)[1]):
+      ax1.plot(time, motion_course[:,icourse])
+
+    ax1.set_xlabel('time [s]')
+    ax1.set_ylabel('affine motion parameter')
+
+    ax1.set_xlim((time[0], time[-1]))
+    ax2.set_xlim((time[0], time[-1]))
+    ax2.set_xticks(np.linspace(0, np.shape(mask_motion)[1], 5))
+    #ax2.set_xticklabels(np.arange(np.shape(mask_motion)[1]))
+    ax2.set_xlabel(r"Phase-encoding lines")
+
+    ax1.legend([r'$t_x$', r'$t_y$', r'$\phi$', r'$G_{xy}$', r'$S_x$', r'$S_y$'], loc='upper center', ncol=6, bbox_to_anchor=(0.5, 1.15))
+    plt.show()
 
 
 def transform_img(img, p):
