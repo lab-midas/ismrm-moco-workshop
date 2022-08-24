@@ -27,7 +27,7 @@ def simulate_motion(img_cc, smaps, mask, p):
         if len(np.shape(p)) != 1:
             p = np.squeeze(tmp[~np.all(tmp == 0, axis=1)])
         kspace_motion = mriForwardOp(transform_img(img_cc, p), smaps, mask)
-        return kspace * ( 1 -mask_motion) + kspace_motion * mask_motion, mask_motion
+        return kspace * (1 - mask_motion) + kspace_motion * mask_motion, mask_motion
     else:  # time-dependent motion
         kspace_aff = np.zeros_like(kspace)
         for ky in np.arange(np.shape(img_cc)[1]):
@@ -51,7 +51,7 @@ def plot_motion_course(motion_course, TR=1):
 
     ax1.set_xlim((time[0], time[-1]))
     ax2.set_xlim((time[0], time[-1]))
-    ax2.set_xticks(np.linspace(0, np.shape(motion_course)[1], 5))
+    ax2.set_xticks(np.linspace(0, np.shape(motion_course)[0], 5))
     #ax2.set_xticklabels(np.arange(np.shape(mask_motion)[1]))
     ax2.set_xlabel(r"Phase-encoding lines")
 
