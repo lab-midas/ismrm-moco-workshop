@@ -33,7 +33,7 @@ def plot_quiver(ax, flow, spacing, scale=1, margin=0, **kwargs):
     ax.set_aspect("equal")
 
 
-def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figsize=None, **kwargs):
+def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figsize=None, detached=False, **kwargs):
     # img        ndarray, list: to be plotted image or list of 2D images
     #            2D: single 2D image
     #            3D: third dimension is plotted side-by-side
@@ -46,6 +46,7 @@ def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figs
     # spacing    space (px) between each arrow in grid
     # scale      scale factor for flow vectors
     # figsize    figure size (width, height)
+    # detached   True: separate individual subplots
     # kwargs     quiver kwargs (default: angles="xy", scale_units="xy")
 
     if isinstance(img, list):
@@ -64,13 +65,22 @@ def plot(img, flow=None, permorder=(2, 0, 1), title='', spacing=4, scale=5, figs
         N = int(np.shape(img)[-1])
 
     if flow is None:
-        if len(np.shape(img)) == 3:
-            figsize = (40, 20) if figsize is None else figsize
-            medutils.visualization.imshow(medutils.visualization.plot_array(np.transpose(img, permorder), M=M, N=N),
-                                          title=title, figsize=figsize)
-        else:
+        if detached:
             figsize = (10, 10) if figsize is None else figsize
-            medutils.visualization.imshow(img, title=title, figsize=figsize)
+            fig, axs = plt.subplots(M, N, figsize=(M * figsize[0], N * figsize[1]))
+            for idx, ax in enumerate(axs):
+                ax.imshow(img[..., idx], cmap='gray')
+                ax.set_axis_off()
+                if isinstance(title, list):
+                    ax.set_title(title[idx])
+        else:
+            if len(np.shape(img)) == 3:
+                figsize = (40, 20) if figsize is None else figsize
+                medutils.visualization.imshow(medutils.visualization.plot_array(np.transpose(img, permorder), M=M, N=N),
+                                              title=title, figsize=figsize)
+            else:
+                figsize = (10, 10) if figsize is None else figsize
+                medutils.visualization.imshow(img, title=title, figsize=figsize)
     else:
         if isinstance(flow, list):
             flow = np.stack(flow, -1)
