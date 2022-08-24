@@ -51,7 +51,7 @@ def plot_motion_course(motion_course, TR=1):
 
     ax1.set_xlim((time[0], time[-1]))
     ax2.set_xlim((time[0], time[-1]))
-    ax2.set_xticks(np.linspace(0, np.shape(mask_motion)[1], 5))
+    ax2.set_xticks(np.linspace(0, np.shape(motion_course)[1], 5))
     #ax2.set_xticklabels(np.arange(np.shape(mask_motion)[1]))
     ax2.set_xlabel(r"Phase-encoding lines")
 
