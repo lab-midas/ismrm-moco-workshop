@@ -27,7 +27,7 @@ The second component of this workshop will include a hands-on tutorial with code
 After completing this workshop, the attendees should have a better understanding of how motion affects MR acquisitions, the type of artefacts it can introduce, existing strategies for dealing with motion, and get practical experience in retrospective motion estimation and correction. 
 
 (THOMAS! maybe you want to add a reference to MedGan or your deep learning motion correction paper from 2018/2019, or maybe some of your work with Haikun?)
-If you use this code in a publication please consider referencing the following papers (as relevant): 
+### If you use this code in a publication please consider referencing the following papers (as relevant): 
 
 a. Küstner T, Pan J, Gilliam C, Qi H, Cruz G, Hammernik K, Blu T, Rueckert D, Botnar R, Prieto C, Gatidis S. Self-supervised motion-corrected image reconstruction network for 4D magnetic resonance imaging of the body trunk. APSIPA Transactions on Signal and Information Processing. 2022 Feb 21;11(1):e12.
 
@@ -37,15 +37,15 @@ c. Cruz G, Atkinson D, Henningsson M, Botnar RM, Prieto C. Highly efficient nonr
 
 d. Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion corrected three‐dimensional abdominal MRI using total variation regularized SENSE reconstruction. Magnetic resonance in medicine. 2016 Apr;75(4):1484-98.
 
-Motion corrected reconstructions are based on the framework laid out by Philip Batchelor in this seminal paper:
+### Motion corrected reconstructions are based on the framework laid out by Philip Batchelor in this seminal paper:
 
 e. Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D. Matrix description of general motion correction applied to multishot images. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
 
-This paper has some very nice discussion on motion corrected reconstructions:
+### This paper has some very nice discussion on motion corrected reconstructions:
 
 f. Hansen MS, Sørensen TS, Arai AE, Kellman P. Retrospective reconstruction of high temporal resolution cine images from real‐time MRI using iterative motion correction. Magnetic Resonance in Medicine. 2012 Sep;68(3):741-50.
 
-For interesting works addressing the problem of joint motion estimation/ motion correction check out the following:
+### For interesting works addressing the problem of joint motion estimation/ motion correction check out the following:
 
 g. Odille F, Vuissoz PA, Marie PY, Felblinger J. Generalized reconstruction by inversion of coupled systems (GRICS) applied to free‐breathing MRI. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2008 Jul;60(1):146-57.
 
@@ -53,7 +53,7 @@ h. Cordero-Grande L, Teixeira RP, Hughes EJ, Hutter J, Price AN, Hajnal JV. Sens
 
 i. Haskell MW, Cauley SF, Wald LL. TArgeted Motion Estimation and Reduction (TAMER): data consistency based motion mitigation for MRI using a reduced model joint optimization. IEEE transactions on medical imaging. 2018 Jan 9;37(5):1253-65.
 
-For generalized motion correction combined with dynamic contrast MR check out:
+### For generalized motion correction combined with dynamic contrast MR check out:
 
 j. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Generalized low‐rank nonrigid motion‐corrected reconstruction for MR fingerprinting. Magnetic Resonance in Medicine. 2022 Feb;87(2):746-63.
 
