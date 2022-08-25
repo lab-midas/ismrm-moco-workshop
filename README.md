@@ -57,7 +57,7 @@ i. Haskell MW, Cauley SF, Wald LL. TArgeted Motion Estimation and Reduction (TAM
 
 j. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Generalized low‐rank nonrigid motion‐corrected reconstruction for MR fingerprinting. Magnetic Resonance in Medicine. 2022 Feb;87(2):746-63.
 
-For an alternative way to perform elastic motion correction without Batchelor's formulation, check out some of the approaches using localized autofocus ideas:
+### For an alternative way to perform elastic motion correction without Batchelor's formulation, check out some of the approaches using localized autofocus ideas:
 
 k. Atkinson D, Hill D, Stoyle P, Summers P, Keevil S. Automatic correction of motion artifacts in magnetic resonance images using an entropy focus criterion. IEEE Trans Med Imaging 1997;16:903–910.
 
