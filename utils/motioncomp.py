@@ -31,7 +31,7 @@ def lin_index(x,y,Nx):
 # get_sparse_motion_matrix takes a [Nx,Ny,2] flow field (i.e no underlying mesh)
 # and creates the corresponding [Nx*Ny Nx*Ny] sparse motion matrix
 
-def get_sparse_motion_matrix (flow_field):
+def get_sparse_motion_matrix(flow_field):
 # creates a sparse motion matrix corresponding to the motion in the flow field 
 # assuming linear interpolation
   Ny = np.shape(flow_field)[1]
