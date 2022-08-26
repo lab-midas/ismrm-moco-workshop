@@ -23,6 +23,12 @@ def maxscale(img):
     return img/np.amax(np.abs(img))
 
 
+def squeeze_batch_dim(x):
+    if np.shape(x)[0] == 1:
+        return x[0, ...]
+    else:
+        return x
+
 # Cartesian 2D operators
 def mriAdjointOp(kspace, mask, smaps):
     return np.sum(ifft2c(kspace * mask)*np.conj(smaps), axis=-1)
@@ -69,8 +75,8 @@ class BatchelorFwd(tf.keras.layers.Layer):
         self.op = BatchForwardOp
 
     def call(self, image, mask, smaps, flow):
-        return numpy2tensor(self.op(image.numpy()[0,...], mask.numpy()[0,...], smaps.numpy()[0,...],
-                                    flow.numpy()[0,...]), add_batch_dim=True, add_channel_dim=False)
+        return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
+                                    squeeze_batch_dim(flow.numpy())), add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorAdj(tf.keras.layers.Layer):
@@ -79,8 +85,8 @@ class BatchelorAdj(tf.keras.layers.Layer):
         self.op = BatchAdjointOp
 
     def call(self, kspace, mask, smaps, flow):
-        return numpy2tensor(self.op(kspace.numpy()[0,...], mask.numpy()[0,...], smaps.numpy()[0,...],
-                                    flow.numpy()[0,...]), add_batch_dim=True, add_channel_dim=False)
+        return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
+                                    squeeze_batch_dim(flow.numpy())), add_batch_dim=True, add_channel_dim=False)
 
 # Non-Cartesian 2D operators
 class GPUNUFFTFwd(tf.keras.layers.Layer):
