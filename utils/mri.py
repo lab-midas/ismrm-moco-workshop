@@ -41,24 +41,24 @@ def BatchForwardOp(image, smaps, masks, motions):
     Nx = np.shape(image)[0]
     Ny = np.shape(image)[1]
     Nc = np.shape(smaps)[2]
-    Nt = np.shape(masks)[2]
+    Nt = np.shape(masks)[-1]
 
     kspace_out = np.zeros((Nx,Ny,Nc,Nt)) + 1j * np.zeros((Nx,Ny,Nc,Nt))
     for t in range(Nt):
         im_aux = apply_sparse_motion(image,get_sparse_motion_matrix(motions[:,:,:,t]),0)
-        kspace_out[:,:,:,t] = mriForwardOp(im_aux, smaps, masks[:,:,t][:,:,np.newaxis])
+        kspace_out[:,:,:,t] = mriForwardOp(im_aux, smaps, masks[:,:,:,t])
     return np.sum(kspace_out,3)
 
 def BatchAdjointOp(kspace, smaps, masks, motions):
     Nx = np.shape(kspace)[0]
     Ny = np.shape(kspace)[1]
     Nc = np.shape(smaps)[2]
-    Nt = np.shape(masks)[2]
+    Nt = np.shape(masks)[-1]
 
     image_out = np.zeros((Nx,Ny,Nt)) + 1j * np.zeros((Nx,Ny,Nt))
     #im_aux = np.zeros((Nx,Ny,Nc))
     for t in range(Nt):
-        im_aux = mriAdjointOp(kspace, smaps, masks[:,:,t][:,:,np.newaxis])
+        im_aux = mriAdjointOp(kspace, smaps, masks[:,:,:,t])
         image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
     return np.sum(image_out,2)
 
