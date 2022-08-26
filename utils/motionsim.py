@@ -59,6 +59,39 @@ def plot_motion_course(motion_course, TR=1):
     plt.show()
 
 
+def get_transform(img, p):
+    # img      input image to be transformed
+    # p        affine transformation parameters
+    #          3D (rank(img) == 3): t_x, t_y, t_z, \phi [°], \theta [°], \psi [°], G_{xy}, G_{xz}, G_{yz}, S_x, S_y, S_z
+    #          2D (rank(img) == 2): t_x, t_y, \phi [°], G_{xy}, S_x, S_y
+    # return   deformation field
+    dim = len(np.shape(img))
+    p = np.asarray(p, dtype='float')
+    if dim == 2:  # 2D
+        trans = affine_translate(p[0:2], dim)
+        rotate = affine_rotate(p[2], dim, tuple(np.asarray(np.shape(img))/2))
+        shear = affine_shear(p[3], dim)
+        scale = affine_scale(p[4:], dim)
+    else:
+        trans = affine_translate(p[0:4], dim)
+        rotate = affine_rotate(p[4:7], dim, tuple(np.asarray(np.shape(img))/2))
+        shear = affine_shear(p[7:6], dim)
+        scale = affine_scale(p[6:], dim)
+
+    affine = sitk.CompositeTransform([trans, rotate, shear, scale])
+    XX, YY = np.meshgrid(np.linspace(0, np.shape(img)[0], np.shape(img)[0]), np.linspace(0, np.shape(img)[1], np.shape(img)[1]))
+
+    # Transform points and compute deformation vectors.
+    pointsX = np.zeros(XX.shape)
+    pointsY = np.zeros(XX.shape)
+    for index, value in np.ndenumerate(XX):
+        px,py = affine.TransformPoint((value, YY[index]))
+        pointsX[index]=px - value
+        pointsY[index]=py - YY[index]
+
+    return np.stack([pointsX, pointsY], -1)
+
+
 def transform_img(img, p):
     # img      input image to be transformed
     # p        affine transformation parameters
