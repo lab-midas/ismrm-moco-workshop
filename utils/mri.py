@@ -43,6 +43,7 @@ def ifft2c(kspace, axes=(0,1)):
     return np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(kspace, axes=axes), norm='ortho', axes=axes), axes=axes)
 
 # Define Batchelor's motion operator
+# motions is now a vertical stack of sparse motion matrices
 def BatchForwardOp(image, masks, smaps, motions):
     Nx = np.shape(image)[0]
     Ny = np.shape(image)[1]
@@ -51,7 +52,8 @@ def BatchForwardOp(image, masks, smaps, motions):
 
     kspace_out = np.zeros((Nx,Ny,Nc,Nt)) + 1j * np.zeros((Nx,Ny,Nc,Nt))
     for t in range(Nt):
-        im_aux = apply_sparse_motion(image,get_sparse_motion_matrix(motions[:,:,:,t]),0)
+        #im_aux = apply_sparse_motion(image,get_sparse_motion_matrix(motions[:,:,:,t]),0)
+        im_aux = apply_sparse_motion(image,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],0)
         kspace_out[:,:,:,t] = mriForwardOp(im_aux, masks[:,:,:,t], smaps)
     return np.sum(kspace_out,3)
 
@@ -65,7 +67,8 @@ def BatchAdjointOp(kspace, masks, smaps, motions):
     #im_aux = np.zeros((Nx,Ny,Nc))
     for t in range(Nt):
         im_aux = mriAdjointOp(kspace, masks[:,:,:,t], smaps)
-        image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
+        #image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
+        image_out[:,:,t] = apply_sparse_motion(im_aux,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],1)
     return np.sum(image_out,2)
 
 
