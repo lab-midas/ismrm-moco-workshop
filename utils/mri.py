@@ -185,7 +185,12 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
     else:
         motioncomp = False
 
-    Nx, Ny, Nc = np.shape(kspace)
+    if bradial:
+        Nx, Nspokes = np.shape(kspace)
+        Ny = Nx
+        Nc = 1
+    else:
+        Nx, Ny, Nc = np.shape(kspace)
     if motioncomp:
         Nt = np.shape(flow)[-1]
     else:
