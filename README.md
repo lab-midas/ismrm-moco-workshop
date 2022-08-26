@@ -64,6 +64,7 @@ For generalized motion correction combined with dynamic contrast MR check out:
 k. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Generalized low‐rank nonrigid motion‐corrected reconstruction for MR fingerprinting. Magnetic Resonance in Medicine. 2022 Feb;87(2):746-63.
 
 For a generalized non-rigid motion description:
+
 l. Huttinga NRF, van den Berg CAT, Luijten PR, Sbrizzi A. MR-MOTUS: model-based non-rigid motion estimation for MR-guided radiotherapy using a reference image and minimal k-space data. Phys Med Biol. 2020 Jan 10;65(1):015004. 
 
 #### Autofocusing
