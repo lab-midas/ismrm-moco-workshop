@@ -32,7 +32,7 @@ def lin_index(x,y,Nx):
 # and creates the corresponding [Nx*Ny Nx*Ny] sparse motion matrix
 
 def get_sparse_motion_matrix(flow_field):
-# creates a sparse motion matrix corresponding to the motion in the flow field 
+# creates a sparse motion matrix corresponding to the motion in the flow field
 # assuming linear interpolation
   Ny = np.shape(flow_field)[1]
   Nx = np.shape(flow_field)[0]
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     w[1,1] = 20
     w[1,2] = 30
 
-    asd = get_sparse_motion_matrix (q)
+    asd = get_sparse_motion_matrix(q)
     imi = apply_sparse_motion(w,asd,1)
     asd2 = asd.transpose()
 
