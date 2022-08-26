@@ -69,23 +69,31 @@ def BatchAdjointOp(kspace, masks, smaps, motions):
     return np.sum(image_out,2)
 
 
-def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft):
+def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft=None):
     Nx = np.shape(image)[0]
     NSpokes = np.shape(traj)[0]
     Nc = np.shape(csm)[0]
     Nt = np.shape(motions)[-1]
+    mcomp = True if nufft is None else False
     kspace_out = np.zeros((Nc, NSpokes, Nt)) + 1j * np.zeros((Nc, NSpokes, Nt))
     for t in range(Nt):
         im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
+        if mcomp:
+            nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
+                                smaps=csm, implementation='gpuNUFFT')
         kspace_out[:, :, t] = nufft.op(im_aux)
     return np.sum(kspace_out, 2)
 
-def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft):
+def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft=None):
     Nx = np.shape(csm)[1]
     Ny = np.shape(csm)[2]
     Nt = np.shape(motions)[-1]
+    mcomp = True if nufft is None else False
     image_out = np.zeros((Nx, Ny, Nt)) + 1j * np.zeros((Nx, Ny, Nt))
     for t in range(Nt):
+        if mcomp:
+            nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
+                                    smaps=csm, implementation='gpuNUFFT')
         im_aux = nufft.adj_op(kspace)
         image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
     return np.sum(image_out, 2)
@@ -137,9 +145,15 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
         self.Nx = nRead
         self.Ny = nRead
         self.Nc = np.shape(csm)[0]
-        #self.Nt = nTime
+        if len(np.shape(traj)) == 3:
+            self.Nt = np.shape(traj)[2]
+        else:
+            self.Nt = 1
         self.NSpokes = np.shape(traj)[0]
-        self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
+        if self.Nt > 1:
+            self.nufft = None
+        else:
+            self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
                                 smaps=csm, implementation='gpuNUFFT')
         self.op = BatchGPUNUFFTForwardOp
 
@@ -154,9 +168,15 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
         self.Nx = nRead
         self.Ny = nRead
         self.Nc = np.shape(csm)[0]
-        #self.Nt = np.shape(traj)[2]
+        if len(np.shape(traj)) == 3:
+            self.Nt = np.shape(traj)[2]
+        else:
+            self.Nt = 1
         self.NSpokes = np.shape(traj)[0]
-        self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
+        if self.Nt > 1:
+            self.nufft = None
+        else:
+            self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
                                   smaps=csm, implementation='gpuNUFFT')
         self.op = BatchGPUNUFFTAdjointOp
 
