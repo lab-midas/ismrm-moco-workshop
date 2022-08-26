@@ -62,6 +62,7 @@ def BatchAdjointOp(kspace, smaps, masks, motions):
         image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
     return np.sum(image_out,2)
 
+
 class BatchelorFwd(tf.keras.layers.Layer):
     def __init__(self):
         super().__init__()
@@ -70,6 +71,7 @@ class BatchelorFwd(tf.keras.layers.Layer):
     def call(self, image, smaps, mask, flow):
         return numpy2tensor(self.op(np.squeeze(image.numpy()), np.squeeze(smaps.numpy()), np.squeeze(mask.numpy()),
                                     np.squeeze(flow.numpy())))
+
 
 class BatchelorAdj(tf.keras.layers.Layer):
     def __init__(self):
@@ -113,8 +115,12 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
                                 smaps=csm, implementation='gpuNUFFT')
 
     def call(self, x, csm, traj, dcf, flow):
-        image = np.squeeze(x.numpy())
-        motions = np.squeeze(flow.numpy())
+        if type(x).__module__ == np.__name__:
+            image = x
+            motions = flow
+        else:
+            image = np.squeeze(x.numpy())
+            motions = np.squeeze(flow.numpy())
 
         kspace_out = np.zeros((self.Nx, self.NSpokes, self.Nc, self.Nt)) + 1j * np.zeros((self.Nx, self.NSpokes, self.Nc, self.Nt))
         for t in range(self.Nt):
@@ -135,8 +141,12 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
                                   smaps=csm, implementation='gpuNUFFT')
 
     def call(self, x, csm, traj, dcf, flow):
-        kspace = np.squeeze(x.numpy())
-        motions = np.squeeze(flow.numpy())
+        if type(x).__module__ == np.__name__:
+            kspace = x
+            motions = flow
+        else:
+            kspace = np.squeeze(x.numpy())
+            motions = np.squeeze(flow.numpy())
 
         image_out = np.zeros((self.Nx, self.Ny, self.Nt)) + 1j * np.zeros((self.Nx, self.Ny, self.Nt))
         for t in range(self.Nt):
@@ -148,7 +158,9 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
 def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None,
                      fwdop=MulticoilForwardOp, adjop=MulticoilAdjointOp,
                      add_batch_dim=True, max_iter=10, tol=1e-12, weight_init=1.0, weight_scale=1.0):
-    # kspace        raw k-space data as [batch, coils, X, Y] or [batch, coils, X, Y, Z] or [batch, coils, time, X, Y] or [batch, coils, time, X, Y, Z] (numpy array)
+    # kspace        raw k-space data as [X, Y, coils] which will be converted to:
+    #               Cartesian + no-motion compensation: [batch, coils, X, Y] or [batch, coils, X, Y, Z] or [batch, coils, time, X, Y] or [batch, coils, time, X, Y, Z] (numpy array)
+    #               Cartesian + motion-compensation / non-Cartesian + no-motion/motion-comp.: [batch, X, Y, coils]
     # smap          coil sensitivity maps with same shape as kspace (or singleton dimension for time) (numpy array)
     # mask          subsampling including/excluding soft-weights with same shape as kspace (numpy array)
     # noisy         initialiaztion for reconstructed image, if None it is created from A^H(kspace) (numpy array)
@@ -170,7 +182,7 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
 
     if flow is not None:
         motioncomp = True
-    else
+    else:
         motioncomp = False
 
     # Forward and Adjoint operators
@@ -178,11 +190,17 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
     AH = adjop
 
     if type(kspace).__module__ == np.__name__:
+        if not bradial and not motioncomp:
+            kspace = np.transpose(kspace, (2, 0, 1))
         kspace = numpy2tensor(kspace, add_batch_dim=add_batch_dim, add_channel_dim=False)
     if smap is not None and type(smap).__module__ == np.__name__:
+        if not bradial and not motioncomp:
+            smap = np.transpose(smap, (2, 0, 1))
         smap = numpy2tensor(smap, add_batch_dim=add_batch_dim, add_channel_dim=False)
     if mask is not None and type(mask).__module__ == np.__name__:
         mask = numpy2tensor(mask, add_batch_dim=add_batch_dim, add_channel_dim=False)
+    else:
+        mask = tf.ones_like(kspace)
     if dcf is not None and type(dcf).__module__ == np.__name__:
         dcf = numpy2tensor(dcf, add_batch_dim=add_batch_dim, add_channel_dim=False)
     if flow is not None and type(flow).__module__ == np.__name__:
