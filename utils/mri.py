@@ -74,11 +74,11 @@ def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft):
     NSpokes = np.shape(traj)[0]
     Nc = np.shape(csm)[0]
     Nt = np.shape(motions)[-1]
-    kspace_out = np.zeros((Nx, NSpokes, Nc, Nt)) + 1j * np.zeros((Nx, NSpokes, Nc, Nt))
+    kspace_out = np.zeros((Nc, NSpokes, Nt)) + 1j * np.zeros((Nc, NSpokes, Nt))
     for t in range(Nt):
         im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
-        kspace_out[:, :, :, t] = nufft.op(im_aux)
-    return np.sum(kspace_out, 3)
+        kspace_out[:, :, t] = nufft.op(im_aux)
+    return np.sum(kspace_out, 2)
 
 def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft):
     Nx = np.shape(csm)[1]
