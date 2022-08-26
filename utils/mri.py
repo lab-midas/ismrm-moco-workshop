@@ -115,7 +115,7 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
         self.Nx = nRead
         self.Ny = nRead
         self.Nc = np.shape(csm)[0]
-        self.Nt = np.shape(traj)[2]
+        #self.Nt = nTime
         self.NSpokes = np.shape(traj)[0]
         self.op = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
                                 smaps=csm, implementation='gpuNUFFT')
@@ -128,8 +128,9 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
             image = np.squeeze(x.numpy())
             motions = np.squeeze(flow.numpy())
 
-        kspace_out = np.zeros((self.Nx, self.NSpokes, self.Nc, self.Nt)) + 1j * np.zeros((self.Nx, self.NSpokes, self.Nc, self.Nt))
-        for t in range(self.Nt):
+        Nt = np.shape(motions)[-1]
+        kspace_out = np.zeros((self.Nx, self.NSpokes, self.Nc, Nt)) + 1j * np.zeros((self.Nx, self.NSpokes, self.Nc, Nt))
+        for t in range(Nt):
             im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
             kspace_out[:, :, :, t] = self.op.op(im_aux)
         return numpy2tensor(np.sum(kspace_out, 3), add_batch_dim=True, add_channel_dim=False)
@@ -141,7 +142,7 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
         self.Nx = nRead
         self.Ny = nRead
         self.Nc = np.shape(csm)[0]
-        self.Nt = np.shape(traj)[2]
+        #self.Nt = np.shape(traj)[2]
         self.NSpokes = np.shape(traj)[0]
         self.op = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
                                   smaps=csm, implementation='gpuNUFFT')
@@ -154,8 +155,9 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
             kspace = np.squeeze(x.numpy())
             motions = np.squeeze(flow.numpy())
 
-        image_out = np.zeros((self.Nx, self.Ny, self.Nt)) + 1j * np.zeros((self.Nx, self.Ny, self.Nt))
-        for t in range(self.Nt):
+        Nt = np.shape(motions)[-1]
+        image_out = np.zeros((self.Nx, self.Ny, Nt)) + 1j * np.zeros((self.Nx, self.Ny, Nt))
+        for t in range(Nt):
             im_aux = self.op.adj_op(kspace)
             image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
         return numpy2tensor(np.sum(image_out, 2), add_batch_dim=True, add_channel_dim=False)
