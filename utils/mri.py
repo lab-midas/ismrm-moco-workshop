@@ -200,7 +200,7 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
     if mask is not None and type(mask).__module__ == np.__name__:
         mask = numpy2tensor(mask, add_batch_dim=add_batch_dim, add_channel_dim=False)
     else:
-        mask = tf.ones_like(kspace)
+        mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
     if dcf is not None and type(dcf).__module__ == np.__name__:
         dcf = numpy2tensor(dcf, add_batch_dim=add_batch_dim, add_channel_dim=False)
     if flow is not None and type(flow).__module__ == np.__name__:
