@@ -26,10 +26,10 @@ The second component of this workshop will include a hands-on tutorial with code
 
 After completing this workshop, the attendees should have a better understanding of how motion affects MR acquisitions, the type of artefacts it can introduce, existing strategies for dealing with motion, and get practical experience in retrospective motion estimation and correction. 
 
-(THOMAS! maybe you want to add a reference to MedGan or your deep learning motion correction paper from 2018/2019, or maybe some of your work with Haikun?)
-### If you use this code in a publication please consider referencing the following papers (as relevant): 
+### Citation
+**If you use this code in a publication please consider referencing the following papers (as relevant):** 
 
-a. Küstner T, Pan J, Gilliam C, Qi H, Cruz G, Hammernik K, Blu T, Rueckert D, Botnar R, Prieto C, Gatidis S. Self-supervised motion-corrected image reconstruction network for 4D magnetic resonance imaging of the body trunk. APSIPA Transactions on Signal and Information Processing. 2022 Feb 21;11(1):e12.
+[a] Küstner T, Pan J, Gilliam C, Qi H, Cruz G, Hammernik K, Blu T, Rueckert D, Botnar R, Prieto C, Gatidis S. Self-supervised motion-corrected image reconstruction network for 4D magnetic resonance imaging of the body trunk. APSIPA Transactions on Signal and Information Processing. 2022 Feb 21;11(1):e12.
 
 b. Küstner T, Pan J, Qi H, Cruz G, Gilliam C, Blu T, Yang B, Gatidis S, Botnar R, Prieto C. LAPNet: Non-rigid Registration derived in k-space for Magnetic Resonance Imaging. IEEE Transactions on Medical Imaging. 2021 Jul 9;40(12):3686-97.
 
@@ -37,33 +37,61 @@ c. Cruz G, Atkinson D, Henningsson M, Botnar RM, Prieto C. Highly efficient nonr
 
 d. Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion corrected three‐dimensional abdominal MRI using total variation regularized SENSE reconstruction. Magnetic resonance in medicine. 2016 Apr;75(4):1484-98.
 
-### Motion corrected reconstructions are based on the framework laid out by Philip Batchelor in this seminal paper:
+e. Hammernik K, Küstner T. Machine Enhanced Reconstruction Learning and Interpretation Networks (MERLIN). Proceedings of the International Society for Magnetic Resonance in Medicine (ISMRM). 2022 May;1051.
 
-e. Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D. Matrix description of general motion correction applied to multishot images. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
+### Further suggested readings
+#### Motion corrected reconstructions 
+Motion corrected reconstructions are based on the framework laid out by Philip Batchelor in this seminal paper:**
 
-### This paper has some very nice discussion on motion corrected reconstructions:
+f. Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D. Matrix description of general motion correction applied to multishot images. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
 
-f. Hansen MS, Sørensen TS, Arai AE, Kellman P. Retrospective reconstruction of high temporal resolution cine images from real‐time MRI using iterative motion correction. Magnetic Resonance in Medicine. 2012 Sep;68(3):741-50.
+This paper has some very nice discussion on motion corrected reconstructions:
 
-### For interesting works addressing the problem of joint motion estimation/ motion correction check out the following:
+g. Hansen MS, Sørensen TS, Arai AE, Kellman P. Retrospective reconstruction of high temporal resolution cine images from real‐time MRI using iterative motion correction. Magnetic Resonance in Medicine. 2012 Sep;68(3):741-50.
 
-g. Odille F, Vuissoz PA, Marie PY, Felblinger J. Generalized reconstruction by inversion of coupled systems (GRICS) applied to free‐breathing MRI. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2008 Jul;60(1):146-57.
+#### Joint motion estimation / motion correction 
+For interesting works addressing the problem of joint motion estimation/ motion correction check out the following:
 
-h. Cordero-Grande L, Teixeira RP, Hughes EJ, Hutter J, Price AN, Hajnal JV. Sensitivity encoding for aligned multishot magnetic resonance reconstruction. IEEE Transactions on Computational Imaging. 2016 Apr 20;2(3):266-80.
+h. Odille F, Vuissoz PA, Marie PY, Felblinger J. Generalized reconstruction by inversion of coupled systems (GRICS) applied to free‐breathing MRI. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2008 Jul;60(1):146-57.
 
-i. Haskell MW, Cauley SF, Wald LL. TArgeted Motion Estimation and Reduction (TAMER): data consistency based motion mitigation for MRI using a reduced model joint optimization. IEEE transactions on medical imaging. 2018 Jan 9;37(5):1253-65.
+i. Cordero-Grande L, Teixeira RP, Hughes EJ, Hutter J, Price AN, Hajnal JV. Sensitivity encoding for aligned multishot magnetic resonance reconstruction. IEEE Transactions on Computational Imaging. 2016 Apr 20;2(3):266-80.
 
-### For generalized motion correction combined with dynamic contrast MR check out:
+j. Haskell MW, Cauley SF, Wald LL. TArgeted Motion Estimation and Reduction (TAMER): data consistency based motion mitigation for MRI using a reduced model joint optimization. IEEE transactions on medical imaging. 2018 Jan 9;37(5):1253-65.
 
-j. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Generalized low‐rank nonrigid motion‐corrected reconstruction for MR fingerprinting. Magnetic Resonance in Medicine. 2022 Feb;87(2):746-63.
+#### Generalized motion correction
+For generalized motion correction combined with dynamic contrast MR check out:
 
-### For an alternative way to perform elastic motion correction without Batchelor's formulation, check out some of the approaches using localized autofocus ideas:
+k. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Generalized low‐rank nonrigid motion‐corrected reconstruction for MR fingerprinting. Magnetic Resonance in Medicine. 2022 Feb;87(2):746-63.
 
-k. Atkinson D, Hill D, Stoyle P, Summers P, Keevil S. Automatic correction of motion artifacts in magnetic resonance images using an entropy focus criterion. IEEE Trans Med Imaging 1997;16:903–910.
+For a generalized non-rigid motion description:
+l. Huttinga NRF, van den Berg CAT, Luijten PR, Sbrizzi A. MR-MOTUS: model-based non-rigid motion estimation for MR-guided radiotherapy using a reference image and minimal k-space data. Phys Med Biol. 2020 Jan 10;65(1):015004. 
 
-l. Cheng JY, Alley MT, Cunningham CH, Vasanawala SS, Pauly JM, Lustig M. Nonrigid motion correction in 3D using autofocusing withlocalized linear translations. Magnetic resonance in medicine. 2012 Dec;68(6):1785-97.
+#### Autofocusing
+For an alternative way to perform elastic motion correction without Batchelor's formulation, check out some of the approaches using localized autofocus ideas:
 
-m. Loktyushin A, Nickisch H, Pohmann R, Schölkopf B. Blind retrospective motion correction of MR images. Magnetic resonance in medicine. 2013 Dec;70(6):1608-18.
+m. Atkinson D, Hill D, Stoyle P, Summers P, Keevil S. Automatic correction of motion artifacts in magnetic resonance images using an entropy focus criterion. IEEE Trans Med Imaging 1997;16:903–910.
+
+n. Cheng JY, Alley MT, Cunningham CH, Vasanawala SS, Pauly JM, Lustig M. Nonrigid motion correction in 3D using autofocusing withlocalized linear translations. Magnetic resonance in medicine. 2012 Dec;68(6):1785-97.
+
+o. Loktyushin A, Nickisch H, Pohmann R, Schölkopf B. Blind retrospective motion correction of MR images. Magnetic resonance in medicine. 2013 Dec;70(6):1608-18.
+
+#### Data-driven motion correction
+For data-driven approaches which retrospectively correct for induced motion:
+
+p. Küstner, T, Armanious, K, Yang, J, Yang, B, Schick, F, Gatidis, S. Retrospective correction of motion-affected MR images using deep learning frameworks. Magn Reson Med. 2019; 82:1527– 1540.
+
+q. Oksuz I, Clough JR, Ruijsink B, Anton EP, Bustin A, Cruz G, Prieto C, King A, Schnabel JA. Deep learning-based detection and correction of cardiac MR motion artefacts during reconstruction for high-quality segmentation. IEEE Transactions on Medical Imaging. 2020; 39(12), 4001-4010.
+
+r. Haskell MW, Cauley SF, Bilgic B, Hossbach J, Splitthoff DN, Pfeuffer J, Setsompop K, Wald LL. Network Accelerated Motion Estimation and Reduction (NAMER): Convolutional neural network guided retrospective motion correction using a separable motion model. Magn Reson Med. 2019 Oct;82(4):1452-1461.
+
+#### Deep learning image registration
+For deep learning image registration you may check the references provided in the Jupyter notebook and here:
+
+b. (see above)
+
+s. Balakrishnan G, Zhao A, Sabuncu MR, Guttag J, Dalca AV. VoxelMorph: a learning framework for deformable medical image registration. IEEE transactions on medical imaging. 2019; 38(8), 1788-1800.
+
+t. Yang J, Küstner T, Hu P, Liò P, Qi H. End-to-End Deep Learning of Non-rigid Groupwise Registration and Reconstruction of Dynamic MRI. Front Cardiovasc Med. 2022 Apr 28;9:880186. 
 
 
 ### References
