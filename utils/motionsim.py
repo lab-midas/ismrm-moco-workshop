@@ -190,6 +190,64 @@ def resample(image, transform, interpolator=sitk.sitkLinear, default_value=0.0):
     return imgres
 
 
+def get_affine_matrix(img, p):
+    if len(np.shape(img)) > 2:
+        raise "Only 2D processing implemented"
+    x, y = np.shape(img)
+    x /= 2
+    y /= 2
+
+    # translation from origin to point (x,y)
+    P1 = np.array([[1, 0, -x], [0, 1, -y], [0, 0, 1]])
+    # translation back to origin from point (x,y)
+    P2 = np.array([[1, 0, x], [0, 1, y], [0, 0, 1]])
+
+    # translation
+    T = np.array([[0, 0, p[0]], [0, 0, p[1]], [0, 0, 0]])
+
+    # rotation
+    radians = -np.pi * np.asarray(p[2]) / 180.
+    R = np.array([[np.cos(radians), -np.sin(radians), 0], [np.sin(radians), np.cos(radians), 0], [0, 0, 1]])
+
+    # shearing
+    G = np.array([[1, p[3], 0], [0, 1, 0], [0, 0, 1]])
+
+    # scaling
+    S = np.array([[p[4], 0, 0], [0, p[5], 0], [0, 0, 1]])
+
+    # affine matrix
+    return np.linalg.multi_dot([P2, G, S, R, P1]) + T
+
+def get_deformation_field_from_affine(img, affine_mat):
+  height, width = np.shape(img)
+  gridY, gridX = np.mgrid[1:width+1, 1:height+1]
+  positions = np.concatenate((np.transpose(gridX.flatten()[:, np.newaxis], (1, 0)), np.transpose(gridY.flatten()[:, np.newaxis], (1, 0)), np.ones((1, img.size))), axis=0)  # with overlaid grid
+  #positions = np.concatenate((np.ones((1, img.size)), np.ones((1, img.size)), np.ones((1, img.size))), axis=0)
+  u = affine_mat @ positions
+  u = np.transpose(np.reshape(np.transpose(u[0:2, :], (1, 0)), (height, width, 2)), (1, 0, 2))
+  return u
+
+def add_mesh_to_def(u):
+  height, width, nd = np.shape(u)
+  gridY, gridX = np.mgrid[1:width+1, 1:height+1]
+  q = np.zeros(np.shape(u))
+  q[:,:,0] = u[:,:,0] + gridY
+  q[:,:,1] = u[:,:,1] + gridX
+  return q
+
+def remove_mesh_from_def(u):
+  height, width, nd = np.shape(u)
+  gridY, gridX = np.mgrid[1:width+1, 1:height+1]
+  q = np.zeros(np.shape(u))
+  q[:,:,0] = u[:,:,0] - gridY
+  q[:,:,1] = u[:,:,1] - gridX
+  return q
+
+def get_flow(img, p):
+    aff = get_affine_matrix(img, p)
+    u = get_deformation_field_from_affine(img, aff)
+    return remove_mesh_from_def(u)
+
 # centered cropping
 def crop(x, s):
     # x: input data
