@@ -158,3 +158,26 @@ if __name__ == "__main__":
     print(w)
     print(type(imi))
     print(imi)
+
+    # additional sparse motion test
+    smm = vstack([smm0, smm1])
+    Nx = np.shape(img_cc)[0]
+    Ny = np.shape(img_cc)[1]
+
+    imti = img_cc + 1j * (img_cc)
+
+    # 1st motion field is identity
+    t = 0
+    asd0 = apply_sparse_motion(imti, smm[t * Nx * Ny:(t + 1) * Nx * Ny, :], 0)
+
+    # 2nd motion field warps the image to a new location
+    t = 1
+    asd1 = apply_sparse_motion(imti, smm[t * Nx * Ny:(t + 1) * Nx * Ny, :], 0)
+
+    # here we warp back the image to the reference state using the transpose
+    t = 1
+    asd1_0 = apply_sparse_motion(asd1, smm[t * Nx * Ny:(t + 1) * Nx * Ny, :], 1)
+
+    plot([asd0, asd1, asd1_0, asd0 - asd1_0])
+    plot([np.real(asd0), np.real(asd1), np.real(asd1_0), np.real(asd0 - asd1_0)])
+    plot([np.imag(asd0), np.imag(asd1), np.imag(asd1_0), np.imag(asd0 - asd1_0)])

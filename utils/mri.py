@@ -74,13 +74,15 @@ def BatchAdjointOp(kspace, masks, smaps, motions):
 
 def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft=None):
     Nx = np.shape(image)[0]
+    Ny = np.shape(image)[1]
     NSpokes = np.shape(traj)[0]
     Nc = np.shape(csm)[0]
     Nt = np.shape(motions)[-1]
     mcomp = True if nufft is None else False
     kspace_out = np.zeros((Nc, NSpokes, Nt)) + 1j * np.zeros((Nc, NSpokes, Nt))
     for t in range(Nt):
-        im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
+        #im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
+        im_aux = apply_sparse_motion(image, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 0)
         if mcomp:
             nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
                                 smaps=csm, implementation='gpuNUFFT')
@@ -98,7 +100,8 @@ def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft=None):
             nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
                                     smaps=csm, implementation='gpuNUFFT')
         im_aux = nufft.adj_op(kspace)
-        image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
+        #image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
+        image_out[:, :, t] = apply_sparse_motion(im_aux, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 1)
     return np.sum(image_out, 2)
 
 
