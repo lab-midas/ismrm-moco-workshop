@@ -112,7 +112,7 @@ class BatchelorFwd(tf.keras.layers.Layer):
 
     def call(self, image, mask, smaps, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    squeeze_batch_dim(flow.numpy())), add_batch_dim=True, add_channel_dim=False)
+                                    flow.numpy, add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorAdj(tf.keras.layers.Layer):
@@ -122,7 +122,7 @@ class BatchelorAdj(tf.keras.layers.Layer):
 
     def call(self, kspace, mask, smaps, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    squeeze_batch_dim(flow.numpy())), add_batch_dim=True, add_channel_dim=False)
+                                    flow.numpy, add_batch_dim=True, add_channel_dim=False)
 
 # Non-Cartesian 2D operators
 class GPUNUFFTFwd(tf.keras.layers.Layer):
@@ -165,7 +165,7 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
 
     def call(self, image, traj, csm, dcf, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(traj.numpy()), squeeze_batch_dim(csm.numpy()),
-                                    squeeze_batch_dim(dcf.numpy()), squeeze_batch_dim(flow.numpy()), self.nufft), add_batch_dim=True, add_channel_dim=False)
+                                    squeeze_batch_dim(dcf.numpy()), flow, self.nufft), add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
@@ -188,7 +188,7 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
 
     def call(self, kspace, traj, csm, dcf, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(traj.numpy()), squeeze_batch_dim(csm.numpy()),
-                    squeeze_batch_dim(dcf.numpy()), squeeze_batch_dim(flow.numpy()), self.nufft), add_batch_dim=True,
+                    squeeze_batch_dim(dcf.numpy()), flow, self.nufft), add_batch_dim=True,
             add_channel_dim=False)
 
 
@@ -253,8 +253,9 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
             mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
     if dcf is not None and type(dcf).__module__ == np.__name__:
         dcf = numpy2tensor(dcf, add_batch_dim=add_batch_dim, add_channel_dim=False)
-    if flow is not None and type(flow).__module__ == np.__name__:
-        flow = numpy2tensor(flow, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
+    # leave flow as sparse motion matrix
+    #if flow is not None and type(flow).__module__ == np.__name__:
+    #    flow = numpy2tensor(flow, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
 
     if noisy is None:
         if bradial:
