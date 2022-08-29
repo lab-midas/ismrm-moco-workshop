@@ -4,10 +4,12 @@
 
 In this hands-on of the [ISMRM Workshop on Motion Detection and Correction 2022](https://www.ismrm.org/workshops/2022/Motion/), we aim to convey the principles of motion artifacts, their appearance in the MR image, means of estimating motion (conventional and deep learning) and correcting for the induced motion artifacts.
 
-Supporting codebase and data for motion correction are supplied in this repository. Python codes are provided to execute and experiment with different motion correction strategies inside a Jupyter notebook:
-- [Jupyter Notebook](https://github.com/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb)
-- <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+Supporting codebase and data for motion correction are supplied in this repository. Python codes are provided to execute and experiment with different motion correction strategies inside a Jupyter notebook-
 
+## Getting started
+Hands-on tutorial:
+- Exercise: [Jupyter Notebook](https://github.com/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb) or <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+- Solutions: [Jupyter Notebook](https://github.com/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb) or <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 ## Syllabus
 ### Target audience
