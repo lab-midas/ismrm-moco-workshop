@@ -112,7 +112,7 @@ class BatchelorFwd(tf.keras.layers.Layer):
 
     def call(self, image, mask, smaps, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    flow.numpy), add_batch_dim=True, add_channel_dim=False)
+                                    flow), add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorAdj(tf.keras.layers.Layer):
@@ -122,7 +122,7 @@ class BatchelorAdj(tf.keras.layers.Layer):
 
     def call(self, kspace, mask, smaps, flow):
         return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    flow.numpy), add_batch_dim=True, add_channel_dim=False)
+                                    flow), add_batch_dim=True, add_channel_dim=False)
 
 # Non-Cartesian 2D operators
 class GPUNUFFTFwd(tf.keras.layers.Layer):
