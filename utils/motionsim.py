@@ -14,7 +14,7 @@ def simulate_motion(img_cc, smaps, mask, p):
     #             at which motion parameters > 0 are defined, i.e. motion is happening
     # return:     motion-affected k-space, motion mask
 
-    kspace = mriForwardOp(img_cc, smaps, mask)
+    kspace = mriForwardOp(img_cc, mask, smaps)
     p = np.asarray(p)
     tmp = np.unique(p, axis=0)
     if len(np.shape(p)) == 1:
@@ -26,12 +26,12 @@ def simulate_motion(img_cc, smaps, mask, p):
     if len(np.shape(p)) == 1 or np.shape(tmp[~np.all(tmp == 0, axis=1)])[0] == 1:  # constant motion over time
         if len(np.shape(p)) != 1:
             p = np.squeeze(tmp[~np.all(tmp == 0, axis=1)])
-        kspace_motion = mriForwardOp(transform_img(img_cc, p), smaps, mask)
+        kspace_motion = mriForwardOp(transform_img(img_cc, p), mask, smaps)
         return kspace * (1 - mask_motion) + kspace_motion * mask_motion, mask_motion
     else:  # time-dependent motion
         kspace_aff = np.zeros_like(kspace)
         for ky in np.arange(np.shape(img_cc)[1]):
-            kspace_aff[:, ky, :] = mriForwardOp(transform_img(img_cc, p[ky, :]), smaps, mask)[:, ky, :]
+            kspace_aff[:, ky, :] = mriForwardOp(transform_img(img_cc, p[ky, :]), mask, smaps)[:, ky, :]
         return kspace_aff, mask_motion
 
 
