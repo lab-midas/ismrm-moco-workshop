@@ -119,18 +119,18 @@ SMouse                 = [];    % A Struct to hold parameters of the mouse opera
 % -------------------------------------------------------------------------
 % Get saved options from file
 iPosition = [100 100 1000 600];
-if exist(SPref.sSaveFilename, 'file')
-    load(SPref.sSaveFilename);
-    SState.sPath           = SSaveVar.sPath;
-    SState.sEvalLineFcn    = SSaveVar.sEvalLineFcn;
-    SState.sEvalROIFcn     = SSaveVar.sEvalROIFcn;
-    SState.dBGColor        = SSaveVar.dBGColor;
-    SState.lShowColorbar   = SSaveVar.lShowColorbar;
-    SState.lShowEvalbar    = SSaveVar.lShowEvalbar;
-    iPosition              = SSaveVar.iPosition;
+%if exist(SPref.sSaveFilename, 'file')
+%    load(SPref.sSaveFilename);
+%    SState.sPath           = SSaveVar.sPath;
+%    SState.sEvalLineFcn    = SSaveVar.sEvalLineFcn;
+%    SState.sEvalROIFcn     = SSaveVar.sEvalROIFcn;
+%    SState.dBGColor        = SSaveVar.dBGColor;
+%    SState.lShowColorbar   = SSaveVar.lShowColorbar;
+%    SState.lShowEvalbar    = SSaveVar.lShowEvalbar;
+%    iPosition              = SSaveVar.iPosition;
         
-    clear SSaveVar; % <- no one needs you anymore! :((
-end
+%    clear SSaveVar; % <- no one needs you anymore! :((
+%end
 % -------------------------------------------------------------------------
 
 % -------------------------------------------------------------------------
