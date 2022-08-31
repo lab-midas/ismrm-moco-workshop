@@ -1,3 +1,20 @@
+%% This script runs a demo of a motion corrected reconstruction, as initially proposed in:
+%Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D.
+%Matrix description of general motion correction applied to multishot images.
+%Magnetic Resonance in Medicine: An Official Journal of the International
+%Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
+
+%% This code was developed as part of the following studies:
+
+%Cruz G, Atkinson D, Henningsson M, Botnar RM, Prieto C. Highly efficient
+%nonrigid motion‐corrected 3D whole‐heart coronary vessel wall imaging.
+%Magnetic resonance in medicine. 2017 May;77(5):1894-908.
+
+%Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion 
+%corrected three‐dimensional abdominal MRI using total variation regularized
+%SENSE reconstruction. Magnetic resonance in medicine. 2016 Apr;75(4):1484-98.
+
+%% You may want to download a newer version of imagine.m, or use any other image viewer (or even just good old imshow).
 
 clear classes
 load('brain.mat');
@@ -763,6 +780,8 @@ imagine(abs(cat(4,MoCoReg_its,MoCo_its,SENSE_its)))
 
 %% In-vivo dataset is available at
 %% https://drive.google.com/file/d/1XJ-myPNOlKR96POjs_rEc9aVvL5D7-ku/view?usp=sharing
+
+%% Contains in-vivo k-space, coil sensitivities and cardiac motion fields between 30 cardiac phases
 
 % Cine data with 20 heartbeats
 cine_data = load('cine_in_vivo');
