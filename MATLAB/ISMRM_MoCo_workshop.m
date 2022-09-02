@@ -1,26 +1,38 @@
 %% This script runs a demo of a motion corrected reconstruction, as initially proposed in:
-%Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D.
-%Matrix description of general motion correction applied to multishot images.
-%Magnetic Resonance in Medicine: An Official Journal of the International
-%Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
 
-%% This code was developed as part of the following studies:
+% Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D.
+% Matrix description of general motion correction applied to multishot images.
+% Magnetic Resonance in Medicine: An Official Journal of the International
+% Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
 
-%Cruz G, Atkinson D, Henningsson M, Botnar RM, Prieto C. Highly efficient
-%nonrigid motion‐corrected 3D whole‐heart coronary vessel wall imaging.
-%Magnetic resonance in medicine. 2017 May;77(5):1894-908.
+%% This code was initially developed as part of the following studies:
 
-%Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion 
-%corrected three‐dimensional abdominal MRI using total variation regularized
-%SENSE reconstruction. Magnetic resonance in medicine. 2016 Apr;75(4):1484-98.
+% Cruz G, Atkinson D, Henningsson M, Botnar RM, Prieto C. Highly efficient
+% nonrigid motion‐corrected 3D whole‐heart coronary vessel wall imaging.
+% Magnetic resonance in medicine. 2017 May;77(5):1894-908.
+
+% Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion 
+% corrected three‐dimensional abdominal MRI using total variation regularized
+% SENSE reconstruction. Magnetic resonance in medicine. 2016 Apr;75(4):1484-98.
+
+%% This demo does not consider the problem of motion estimation. Motion for the 
+%% in-vivo case at the end was estimated via image registration with NiftyReg:
+%% http://cmictig.cs.ucl.ac.uk/wiki/index.php/NiftyReg
+%% More advanced methods registration methods can also be used, like LAPNet:
+%% https://github.com/lab-midas/lapnet
+
+%% A more complete demo on motion artefacts, motion estimation and motion correction
+%% can be found in the python code and associated google colab.
 
 %% You may want to download a newer version of imagine.m, or use any other image viewer (or even just good old imshow).
+
+%% If you have any questions/ suggestions, get in touch with us via
+%% glimadac@med.umich.edu and/or thomas.kuestner@med.uni-tuebingen.de 
 
 clear classes
 load('brain.mat');
 load('smaps.mat');
 addpath(genpath('./'));
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 0 Apply affine transformation to image
@@ -116,6 +128,10 @@ At1(:,1:2:end) = 1;
 At2 = zeros(size(brain));
 At2(:,2:2:end) = 1;
 At{1} = At1; At{2} = At2;
+
+% The current implementation of Batchelor's reconstruction creates sparse motion matrices
+% assuming the underlying motion fields include a mesh grid of coordinates for x and y. You
+% may add/remove the mesh grid using "Add_mesh_to_DF.m" or "Remove_mesh_from_DF.m"
 
 % Forward model with motion
 E_motion_yes = Batch_cart(At,csm,motion_fields);
