@@ -96,6 +96,8 @@ s. Balakrishnan G, Zhao A, Sabuncu MR, Guttag J, Dalca AV. VoxelMorph: a learnin
 
 t. Yang J, Küstner T, Hu P, Liò P, Qi H. End-to-End Deep Learning of Non-rigid Groupwise Registration and Reconstruction of Dynamic MRI. Front Cardiovasc Med. 2022 Apr 28;9:880186. 
 
+### A few slides on the problem of motion in abdominal and cardiac MR
+https://docs.google.com/presentation/d/1iRzvTGj1i-aoXcTtlEKoSmUdF8-5mGSe/edit?usp=sharing&ouid=104740692077922168506&rtpof=true&sd=true
 
 ### References
 1. Zaitsev M, Maclaren J, Herbst M. Motion artifacts in MRI: A complex problem with many partial solutions. Journal of Magnetic Resonance Imaging. 2015 Oct;42(4):887-901.
