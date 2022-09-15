@@ -1,3 +1,6 @@
+% (c) Gastao Cruz, 2022, University of Michigan
+% (c) Gastao Cruz, 2013-2022, King's College London
+
 %% This script runs a demo of a motion corrected reconstruction, as initially proposed in:
 
 % Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D.
