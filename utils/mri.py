@@ -45,7 +45,7 @@ def ifft2c(kspace, axes=(0,1)):
 
 # Define Batchelor's motion operator
 # motions is now a vertical stack of sparse motion matrices
-def BatchForwardOp(image, masks, smaps, motions):
+def BatchForwardOp(image, masks, smaps, motions, use_optox=False):
     Nx = np.shape(image)[0]
     Ny = np.shape(image)[1]
     Nc = np.shape(smaps)[2]
@@ -53,12 +53,14 @@ def BatchForwardOp(image, masks, smaps, motions):
 
     kspace_out = np.zeros((Nx,Ny,Nc,Nt)) + 1j * np.zeros((Nx,Ny,Nc,Nt))
     for t in range(Nt):
-        #im_aux = apply_sparse_motion(image,get_sparse_motion_matrix(motions[:,:,:,t]),0)
-        im_aux = apply_sparse_motion(image,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],0)
+        if use_optox:
+            im_aux = apply_sparse_motion(image,get_sparse_motion_matrix(motions[:,:,:,t]),0)
+        else:
+            im_aux = apply_sparse_motion(image,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],0)
         kspace_out[:,:,:,t] = mriForwardOp(im_aux, masks[:,:,:,t], smaps)
     return np.sum(kspace_out,3)
 
-def BatchAdjointOp(kspace, masks, smaps, motions):
+def BatchAdjointOp(kspace, masks, smaps, motions, use_optox=False):
     Nx = np.shape(kspace)[0]
     Ny = np.shape(kspace)[1]
     Nc = np.shape(smaps)[2]
@@ -68,12 +70,14 @@ def BatchAdjointOp(kspace, masks, smaps, motions):
     #im_aux = np.zeros((Nx,Ny,Nc))
     for t in range(Nt):
         im_aux = mriAdjointOp(kspace, masks[:,:,:,t], smaps)
-        #image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
-        image_out[:,:,t] = apply_sparse_motion(im_aux,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],1)
+        if use_optox:
+            image_out[:,:,t] = apply_sparse_motion(im_aux,get_sparse_motion_matrix(motions[:,:,:,t]),1)
+        else:
+            image_out[:,:,t] = apply_sparse_motion(im_aux,motions[t*Nx*Ny:(t+1)*Nx*Ny,:],1)
     return np.sum(image_out,2)
 
 
-def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft=None):
+def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft=None, use_optox=False):
     Nx = np.shape(image)[0]
     Ny = np.shape(image)[1]
     NSpokes = np.shape(traj)[0]
@@ -82,15 +86,17 @@ def BatchGPUNUFFTForwardOp(image, traj, csm, dcf, motions, nufft=None):
     mcomp = True if nufft is None else False
     kspace_out = np.zeros((Nc, NSpokes, Nt)) + 1j * np.zeros((Nc, NSpokes, Nt))
     for t in range(Nt):
-        #im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
-        im_aux = apply_sparse_motion(image, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 0)
+        if use_optox:
+            im_aux = apply_sparse_motion(image, get_sparse_motion_matrix(motions[:, :, :, t]), 0)
+        else:
+            im_aux = apply_sparse_motion(image, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 0)
         if mcomp:
             nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
                                 smaps=csm, implementation='gpuNUFFT')
         kspace_out[:, :, t] = nufft.op(im_aux)
     return np.sum(kspace_out, 2)
 
-def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft=None):
+def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft=None, use_optox=False):
     Nx = np.shape(csm)[1]
     Ny = np.shape(csm)[2]
     Nt = np.shape(motions)[-1]
@@ -101,8 +107,10 @@ def BatchGPUNUFFTAdjointOp(kspace, traj, csm, dcf, motions, nufft=None):
             nufft = NonCartesianFFT(samples=traj[..., t], shape=[Nx, Nx], n_coils=Nc, density_comp=dcf[..., t],
                                     smaps=csm, implementation='gpuNUFFT')
         im_aux = nufft.adj_op(kspace)
-        #image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
-        image_out[:, :, t] = apply_sparse_motion(im_aux, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 1)
+        if use_optox:
+            image_out[:, :, t] = apply_sparse_motion(im_aux, get_sparse_motion_matrix(motions[:, :, :, t]), 1)
+        else:
+            image_out[:, :, t] = apply_sparse_motion(im_aux, motions[t * Nx * Ny:(t + 1) * Nx * Ny, :], 1)
     return np.sum(image_out, 2)
 
 
@@ -118,7 +126,7 @@ class BatchelorFwd(tf.keras.layers.Layer):
             flowlist.append(get_sparse_motion_matrix(flow[:, :, :, t]))
         smm = vstack(flowlist)
         return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    smm), add_batch_dim=True, add_channel_dim=False)
+                                    smm, use_optox=True), add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorAdj(tf.keras.layers.Layer):
@@ -133,9 +141,27 @@ class BatchelorAdj(tf.keras.layers.Layer):
             flowlist.append(get_sparse_motion_matrix(flow[:, :, :, t]))
         smm = vstack(flowlist)
         return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(mask.numpy()), squeeze_batch_dim(smaps.numpy()),
-                                    smm), add_batch_dim=True, add_channel_dim=False)
+                                    smm, use_optox=True), add_batch_dim=True, add_channel_dim=False)
 
 # Non-Cartesian 2D operators
+class GPUNUFFTOp():
+    def __init__(self, traj, csm, dcf, nRead):
+        self.traj = traj
+        self.csm = csm
+        self.dcf = dcf
+        self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
+                                smaps=csm, implementation='gpuNUFFT')
+
+    def forward(self, image):
+        return self.nufft.op(image)
+
+    def adjoint(self, kspace):
+        return self.nufft.adj_op(kspace)
+
+    def set_nufft(self, nufft):
+        self.nufft = nufft
+
+
 class GPUNUFFTFwd(tf.keras.layers.Layer):
     def __init__(self, nRead, traj, csm, dcf):
         super().__init__()
@@ -181,7 +207,7 @@ class BatchelorGPUNUFFTFwd(tf.keras.layers.Layer):
             flowlist.append(get_sparse_motion_matrix(flow[:, :, :, t]))
         smm = vstack(flowlist)
         return numpy2tensor(self.op(squeeze_batch_dim(image.numpy()), squeeze_batch_dim(traj.numpy()), squeeze_batch_dim(csm.numpy()),
-                                    squeeze_batch_dim(dcf.numpy()), smm, self.nufft), add_batch_dim=True, add_channel_dim=False)
+                                    squeeze_batch_dim(dcf.numpy()), smm, self.nufft, use_optox=True), add_batch_dim=True, add_channel_dim=False)
 
 
 class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
@@ -209,13 +235,13 @@ class BatchelorGPUNUFFTAdj(tf.keras.layers.Layer):
             flowlist.append(get_sparse_motion_matrix(flow[:, :, :, t]))
         smm = vstack(flowlist)
         return numpy2tensor(self.op(squeeze_batch_dim(kspace.numpy()), squeeze_batch_dim(traj.numpy()), squeeze_batch_dim(csm.numpy()),
-                    squeeze_batch_dim(dcf.numpy()), smm, self.nufft), add_batch_dim=True,
+                    squeeze_batch_dim(dcf.numpy()), smm, self.nufft, use_optox=True), add_batch_dim=True,
             add_channel_dim=False)
 
 
 def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None,
                      fwdop=MulticoilForwardOp, adjop=MulticoilAdjointOp,
-                     add_batch_dim=True, max_iter=10, tol=1e-12, weight_init=1.0, weight_scale=1.0):
+                     add_batch_dim=True, max_iter=10, tol=1e-12, weight_init=1.0, weight_scale=1.0, use_optox=False):
     # kspace        raw k-space data as [X, Y, coils] which will be converted to:
     #               Cartesian + no-motion compensation: [batch, coils, X, Y] or [batch, coils, X, Y, Z] or [batch, coils, time, X, Y] or [batch, coils, time, X, Y, Z] (numpy array)
     #               Cartesian + motion-compensation / non-Cartesian + no-motion/motion-comp.: [batch, X, Y, coils]
@@ -257,48 +283,112 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
     A = fwdop
     AH = adjop
 
-    if type(kspace).__module__ == np.__name__:
+    if use_optox:
+        if type(kspace).__module__ == np.__name__:
+            if not bradial and not motioncomp:
+                kspace = np.transpose(kspace, (2, 0, 1))
+            kspace = numpy2tensor(kspace, add_batch_dim=add_batch_dim, add_channel_dim=False)
+        if smap is not None and type(smap).__module__ == np.__name__:
+            if not bradial and not motioncomp:
+                smap = np.transpose(smap, (2, 0, 1))
+            smap = numpy2tensor(smap, add_batch_dim=add_batch_dim, add_channel_dim=False)
+        if mask is not None and type(mask).__module__ == np.__name__:
+            mask = numpy2tensor(mask, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
+        else:
+            if motioncomp:
+                mask = tf.ones([Nx, Ny, Nc, Nt], dtype=tf.float32)
+            else:
+                mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
+        if dcf is not None and type(dcf).__module__ == np.__name__:
+            dcf = numpy2tensor(dcf, add_batch_dim=add_batch_dim, add_channel_dim=False)
+        if flow is not None and type(flow).__module__ == np.__name__:
+            flow = numpy2tensor(flow, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
+
+        if noisy is None:
+            if bradial:
+                if motioncomp:
+                    noisy = AH(kspace, mask, smap, dcf, flow)
+                else:
+                    noisy = AH(kspace, mask, smap, dcf)
+            else:
+                if motioncomp:
+                    noisy = AH(kspace, mask, smap, flow)
+                else:
+                    noisy = AH(kspace, mask, smap)
+        elif noisy is not None and type(noisy).__module__ == np.__name__:
+            noisy = numpy2tensor(noisy, add_batch_dim=add_batch_dim, add_channel_dim=False)
+
+        model = DCPM(A, AH, weight_init=weight_init, weight_scale=weight_scale, max_iter=max_iter, tol=tol)
+        if bradial:  # non-Cartesian
+            if motioncomp:
+                return np.squeeze(model([noisy, kspace, smap, mask, dcf, flow]).numpy())
+            else:
+                return np.squeeze(model([noisy, kspace, smap, mask, dcf]).numpy())
+        else:  # Cartesian
+            if motioncomp:
+                return np.squeeze(model([noisy, kspace, mask, smap, flow]).numpy())
+            else:
+                return np.squeeze(model([noisy, kspace, mask, smap]).numpy())
+    else:
         if not bradial and not motioncomp:
             kspace = np.transpose(kspace, (2, 0, 1))
-        kspace = numpy2tensor(kspace, add_batch_dim=add_batch_dim, add_channel_dim=False)
-    if smap is not None and type(smap).__module__ == np.__name__:
-        if not bradial and not motioncomp:
-            smap = np.transpose(smap, (2, 0, 1))
-        smap = numpy2tensor(smap, add_batch_dim=add_batch_dim, add_channel_dim=False)
-    if mask is not None and type(mask).__module__ == np.__name__:
-        mask = numpy2tensor(mask, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
-    else:
-        if motioncomp:
-            mask = tf.ones([Nx, Ny, Nc, Nt], dtype=tf.float32)
-        else:
-            mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
-    if dcf is not None and type(dcf).__module__ == np.__name__:
-        dcf = numpy2tensor(dcf, add_batch_dim=add_batch_dim, add_channel_dim=False)
-    if flow is not None and type(flow).__module__ == np.__name__:
-        flow = numpy2tensor(flow, add_batch_dim=add_batch_dim, add_channel_dim=False, dtype=tf.float32)
 
-    if noisy is None:
-        if bradial:
-            if motioncomp:
-                noisy = AH(kspace, mask, smap, dcf, flow)
-            else:
-                noisy = AH(kspace, mask, smap, dcf)
-        else:
-            if motioncomp:
-                noisy = AH(kspace, mask, smap, flow)
-            else:
-                noisy = AH(kspace, mask, smap)
-    elif noisy is not None and type(noisy).__module__ == np.__name__:
-        noisy = numpy2tensor(noisy, add_batch_dim=add_batch_dim, add_channel_dim=False)
+        if smap is not None:
+            if not bradial and not motioncomp:
+                smap = np.transpose(smap, (2, 0, 1))
 
-    model = DCPM(A, AH, weight_init=weight_init, weight_scale=weight_scale, max_iter=max_iter, tol=tol)
-    if bradial:  # non-Cartesian
-        if motioncomp:
-            return np.squeeze(model([noisy, kspace, smap, mask, dcf, flow]).numpy())
-        else:
-            return np.squeeze(model([noisy, kspace, smap, mask, dcf]).numpy())
-    else:  # Cartesian
-        if motioncomp:
-            return np.squeeze(model([noisy, kspace, mask, smap, flow]).numpy())
-        else:
-            return np.squeeze(model([noisy, kspace, mask, smap]).numpy())
+        if mask is None:
+            if motioncomp:
+                mask = tf.ones([Nx, Ny, Nc, Nt], dtype=tf.float32)
+            else:
+                mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
+
+        if noisy is None:
+            if bradial:
+                if motioncomp:
+                    noisy = AH(kspace, mask, smap, dcf, flow)
+                else:
+                    noisy = AH(kspace, mask, smap, dcf)
+            else:
+                if motioncomp:
+                    noisy = AH(kspace, mask, smap, flow)
+                else:
+                    noisy = AH(kspace, mask, smap)
+
+        if bradial:  # non-Cartesian
+            if motioncomp:
+                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf, flow], A, AH, max_iter, tol).numpy())
+            else:
+                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf], A, AH, max_iter, tol).numpy())
+        else:  # Cartesian
+            if motioncomp:
+                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap, flow], A, AH, max_iter, tol).numpy())
+            else:
+                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap], A, AH, max_iter, tol).numpy())
+
+# Conjugate gradient solver for linear inverse problem
+def conjugate_gradient(inputs, A, AH, max_iter=10, tol=1e-12):
+    #x0 = inputs[0]
+    y = inputs[1]
+    constants = inputs[2:]
+
+    #xk = x0
+    rhs = AH(y, *constants)
+    def M(p):
+        return AH(A(p, *constants), *constants)
+
+    x = np.zeros_like(rhs)
+    i, r, p = 0, rhs, rhs
+    rTr = np.real(np.sum(np.conj(r) * r))
+    num_iter = 0
+    while (num_iter < max_iter) and (rTr > tol):
+        Ap = M(p)
+        alpha = rTr / np.real(np.sum(np.conj(p) * Ap))
+        x = x + p * alpha
+        r = r - Ap * alpha
+        rTrNew = np.real(np.sum(np.conj(r) * r))
+        beta = rTrNew / rTr
+        rTr = rTrNew
+        p = r + p * beta
+
+    return x
