@@ -12,7 +12,7 @@ Supporting codebase and data for motion correction are supplied in this reposito
 - Solutions: <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 ### Local installation
-Run the script `install.sh` to set up a local conda environment in which the notebooks can be executed ([https://conda.io/projects/conda/en/latest/user-guide/install/index.html](Conda) is required).
+Run the script `install.sh` to set up a local conda environment in which the notebooks can be executed ([Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) is required).
 
 ```
 chmod +x install.sh
