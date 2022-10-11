@@ -152,10 +152,10 @@ class GPUNUFFTOp():
         self.nufft = NonCartesianFFT(samples=traj, shape=[nRead, nRead], n_coils=np.shape(csm)[0], density_comp=dcf,
                                 smaps=csm, implementation='gpuNUFFT')
 
-    def forward(self, image, mask=None, smaps=None):
+    def forward(self, image, mask=None, smaps=None, dcf=None):
         return self.nufft.op(image)
 
-    def adjoint(self, kspace, mask=None, smaps=None):
+    def adjoint(self, kspace, mask=None, smaps=None, dcf=None):
         return self.nufft.adj_op(kspace)
 
     def set_nufft(self, nufft):
