@@ -167,7 +167,7 @@ itsdangerous==1.1.0
 #jaxlib @ https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.3.14+cuda11.cudnn805-cp37-none-manylinux2014_x86_64.whl
 #jieba==0.42.1
 #Jinja2==2.11.3
-joblib==1.1.0
+joblib==1.2.0
 jpeg4py==0.1.4
 jsonschema==4.3.3
 jupyter-client==6.1.12
