@@ -330,18 +330,11 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
             else:
                 return np.squeeze(model([noisy, kspace, mask, smap]).numpy())
     else:
-        if not bradial and not motioncomp:
-            kspace = np.transpose(kspace, (2, 0, 1))
-
-        if smap is not None:
-            if not bradial and not motioncomp:
-                smap = np.transpose(smap, (2, 0, 1))
-
         if mask is None:
             if motioncomp:
                 mask = np.ones([Nx, Ny, Nc, Nt], dtype=np.float32)
             else:
-                mask = np.ones(tf.shape(kspace), dtype=np.float32)
+                mask = np.ones(np.shape(kspace), dtype=np.float32)
 
         if noisy is None:
             if bradial:
