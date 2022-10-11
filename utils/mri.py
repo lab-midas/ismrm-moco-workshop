@@ -339,9 +339,9 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
 
         if mask is None:
             if motioncomp:
-                mask = tf.ones([Nx, Ny, Nc, Nt], dtype=tf.float32)
+                mask = np.ones([Nx, Ny, Nc, Nt], dtype=np.float32)
             else:
-                mask = tf.ones(tf.shape(kspace), dtype=tf.float32)
+                mask = np.ones(tf.shape(kspace), dtype=np.float32)
 
         if noisy is None:
             if bradial:
@@ -390,5 +390,6 @@ def conjugate_gradient(inputs, A, AH, max_iter=10, tol=1e-12):
         beta = rTrNew / rTr
         rTr = rTrNew
         p = r + p * beta
+        num_iter += 1
 
     return x
