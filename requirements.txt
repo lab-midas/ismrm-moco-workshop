@@ -271,7 +271,7 @@ progressbar2==4.0.0
 promise==2.3
 prompt-toolkit==2.0.10
 prophet==1.1
-protobuf==3.17.3
+protobuf==3.18.3
 psutil==5.4.8
 psycopg2==2.9.3
 ptyprocess==0.7.0
