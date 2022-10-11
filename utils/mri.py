@@ -357,14 +357,14 @@ def iterativeSENSE(kspace, smap=None, mask=None, noisy=None, dcf=None, flow=None
 
         if bradial:  # non-Cartesian
             if motioncomp:
-                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf, flow], A, AH, max_iter, tol).numpy())
+                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf, flow], A, AH, max_iter, tol))
             else:
-                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf], A, AH, max_iter, tol).numpy())
+                return np.squeeze(conjugate_gradient([noisy, kspace, smap, mask, dcf], A, AH, max_iter, tol))
         else:  # Cartesian
             if motioncomp:
-                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap, flow], A, AH, max_iter, tol).numpy())
+                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap, flow], A, AH, max_iter, tol))
             else:
-                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap], A, AH, max_iter, tol).numpy())
+                return np.squeeze(conjugate_gradient([noisy, kspace, mask, smap], A, AH, max_iter, tol))
 
 # Conjugate gradient solver for linear inverse problem
 def conjugate_gradient(inputs, A, AH, max_iter=10, tol=1e-12):
