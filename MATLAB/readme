@@ -1,3 +1,3 @@
 This MATLAB demo contains code for Generalized Motion Corrected reconstructions, as proposed by Batchelor et. al. 
-Equivalent examples in python are given in the last section of the main notebook. 
+Equivalent examples in python are given in the last section of the main jupyter notebook (access via google colab). 
 This MATLAB demo does not cover the problem of motion estimation.
