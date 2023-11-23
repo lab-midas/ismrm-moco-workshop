@@ -35,7 +35,7 @@ else
   # Python packages
   pip install --upgrade pip
   pip install -r requirements.txt
-  pip install simpleitk git+https://github.com/khammernik/medutils.git python-pysap scikit-image voxelmorph tensorflow-gpu
+  pip install simpleitk medutils-mri python-pysap scikit-image voxelmorph
   git clone https://github.com/voxelmorph/voxelmorph.git
 
   # ESPIRIT
@@ -105,7 +105,3 @@ else
 
   echo "=== Installation finished! ===="
 fi
-
-
-
-
