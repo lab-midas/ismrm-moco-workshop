@@ -35,7 +35,7 @@ else
   # Python packages
   pip install --upgrade pip
   pip install -r requirements.txt
-  pip install simpleitk medutils-mri python-pysap scikit-image voxelmorph
+  pip install simpleitk medutils-mri scikit-image voxelmorph
   git clone https://github.com/voxelmorph/voxelmorph.git
 
   # ESPIRIT
@@ -50,7 +50,7 @@ else
   cmake .. -DGEN_MEX_FILES=OFF
   make
   apt install libnfft3-dev
-  pip install gpuNUFFT pynfft2
+  pip install gpuNUFFT pynfft2 python-pysap
 
   # Optox
   if [ "$USE_OPTOX" = true ] ; then
