@@ -1,0 +1,47 @@
+name: ismrmmocoworkshop
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - cudatoolkit-dev=11.2
+  - h5py
+  - imageio
+  - matplotlib==3.2.2
+  - numpy
+  - pandas
+  - pydicom
+  - python=3.8
+  - scikit-image
+  - scikit-learn
+  - scipy
+  - tensorboard
+  - torchmetrics
+  - torchaudio
+  - torchvision
+  - cmake=3.12
+  - pip
+  - setuptools
+  - six
+  - wheel
+  - gcc_linux-64=8.5.0
+  - gxx_linux-64=8.5.0
+  - jupyter
+  - notebook
+  - ipykernel
+  - doxygen
+  - pip:
+    - optuna
+    - pytorch-lightning
+    - simpleitk
+    - medutils-mri
+    - voxelmorph
+    - runstats
+    - pingouin
+    - merlinpy-mri
+    - merlinth-mri
+    - mkl==2024.0
+    - neurite
+    - -r requirements_optox.txt
+
+prefix: /opt/conda

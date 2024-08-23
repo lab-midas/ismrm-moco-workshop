@@ -1,0 +1,39 @@
+{
+    "name": "MoCo Workshop Container",
+
+
+    "image": "ismrm-moco-workshop:latest",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "streetsidesoftware.code-spell-checker",
+                "eamodio.gitlens",
+                "ms-python.black-formatter",
+                "njpwerner.autodocstring",
+                "ms-vscode.cpptools",
+                "ms-azuretools.vscode-docker",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    },
+    "runArgs": [
+        "--network=host",
+        "--gpus=all",
+        "--shm-size=2G"
+    ],
+
+
+    "postCreateCommand": "bash -c 'eval \"$(/opt/conda/bin/conda shell.bash hook)\" && conda activate ismrmmocoworkshop && python -m ipykernel install --user --name ismrmmocoworkshop --display-name \"Python (ismrmmocoworkshop)\"'",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ],
+
+    "forwardPorts": [
+        8000,
+        9000
+    ],
+    "postStartCommand": "/opt/conda/bin/activate ismrmmocoworkshop",
+    "postAttachCommand": "/opt/conda/bin/activate ismrmmocoworkshop"
+}
