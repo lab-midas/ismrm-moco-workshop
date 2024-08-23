@@ -14,7 +14,7 @@ You have three options to work with this repository: Google Colab, a (pre-built)
 - Solutions: <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 ### Docker
-Either use the pre-built image or build the image yourself</br>
+Either use the pre-built image or build the image yourself. In both cases in the Jupyter notebook you do not need to run the "Installation" steps (all already set up). You only need to execute the "Imports". You may also want to change the `datapath` to `/workspace/data/...`.</br>
 **a) Pre-built image**
 ```
 docker run -it --rm -p 8888:8888 thomaskuestner/ismrm-moco-workshop:latest /opt/conda/envs/ismrmmocoworkshop/bin/jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
