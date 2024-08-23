@@ -7,9 +7,28 @@ In this hands-on of the [ISMRM Workshop on Motion Detection and Correction 2022]
 Supporting codebase and data for motion correction are supplied in this repository. Python codes are provided to execute and experiment with different motion correction strategies inside a Jupyter notebook. For the motion-compensated image reconstruction, we additionally provide Matlab code.
 
 ## Getting started
+You have three options to work with this repository: Google Colab, a (pre-built) Docker image, or a local installation
+
 ### Google Colab
 - Exercise: <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 - Solutions: <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+
+### Docker
+Either use the pre-built image or build the image yourself</br>
+**a) Pre-built image**
+```
+docker run -it --rm -p 8888:8888 thomaskuestner/ismrm-moco-workshop:latest /opt/conda/envs/ismrmmocoworkshop/bin/jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
+```
+
+**b) Build image yourself**
+```
+cd docker
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+docker build -t ismrm-moco-workshop .
+docker run -it --rm -p 8888:8888 ismrm-moco-workshop /opt/conda/envs/ismrmmocoworkshop/bin/jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
+```
+
+Instead of starting the Jupyter notebook within the Docker container, you can also attach your VSCode to the Docker image. Open this repository folder in VSCode and attach to the Docker image using the config `.devcontainer/devcontainer.json`
 
 ### Local installation
 Run the script `install.sh` to set up a local conda environment in which the notebooks can be executed ([Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) is required). If your CUDA installation path differs from the default (`/usr/local/cuda`), please set the environment variable `export CUDA_ROOT_DIR=YOUR_PATH_TO_CUDA`.
@@ -41,10 +60,10 @@ The first component of this workshop will be talks covering the fundamentals of 
 
 The second component of this workshop will include a hands-on tutorial with code examples focusing on retrospective motion correction which covers three aspects: motion artifact appearance, motion estimation via image registration and motion corrected reconstructions. First, we will analyse different types of motion artefacts, evaluating their behaviour in the context of different motion model geometries (e.g. translation, rigid, affine, etc) and different trajectories (e.g. Cartesian, radial, etc). Second, we will experiment with image registration tools for motion estimation and investigate their performance in various scenarios. Third, we will implement a motion corrected reconstruction and study the properties of that model in the presence of noise, undersampling or model errors. We will apply all these approaches to real in-vivo cases.
 
-After completing this workshop, the attendees should have a better understanding of how motion affects MR acquisitions, the type of artefacts it can introduce, existing strategies for dealing with motion, and get practical experience in retrospective motion estimation and correction. 
+After completing this workshop, the attendees should have a better understanding of how motion affects MR acquisitions, the type of artefacts it can introduce, existing strategies for dealing with motion, and get practical experience in retrospective motion estimation and correction.
 
 ### Citation
-**If you use this code in a publication please consider referencing the following papers (as relevant):** 
+**If you use this code in a publication please consider referencing the following papers (as relevant):**
 
 [a] Küstner T, Pan J, Gilliam C, Qi H, Cruz G, Hammernik K, Blu T, Rueckert D, Botnar R, Prieto C, Gatidis S. Self-supervised motion-corrected image reconstruction network for 4D magnetic resonance imaging of the body trunk. APSIPA Transactions on Signal and Information Processing. 2022 Feb 21;11(1):e12.
 
@@ -57,7 +76,7 @@ d. Cruz G, Atkinson D, Buerger C, Schaeffter T, Prieto C. Accelerated motion cor
 e. Hammernik K, Küstner T. Machine Enhanced Reconstruction Learning and Interpretation Networks (MERLIN). Proceedings of the International Society for Magnetic Resonance in Medicine (ISMRM). 2022 May;1051.
 
 ### Further suggested readings
-#### Motion corrected reconstructions 
+#### Motion corrected reconstructions
 Motion corrected reconstructions are based on the framework laid out by Philip Batchelor in this seminal paper:**
 
 f. Batchelor PG, Atkinson D, Irarrazaval P, Hill DL, Hajnal J, Larkman D. Matrix description of general motion correction applied to multishot images. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2005 Nov;54(5):1273-80.
@@ -66,7 +85,7 @@ This paper has some very nice discussion on motion corrected reconstructions:
 
 g. Hansen MS, Sørensen TS, Arai AE, Kellman P. Retrospective reconstruction of high temporal resolution cine images from real‐time MRI using iterative motion correction. Magnetic Resonance in Medicine. 2012 Sep;68(3):741-50.
 
-#### Joint motion estimation / motion correction 
+#### Joint motion estimation / motion correction
 For interesting works addressing the problem of joint motion estimation/ motion correction check out the following:
 
 h. Odille F, Vuissoz PA, Marie PY, Felblinger J. Generalized reconstruction by inversion of coupled systems (GRICS) applied to free‐breathing MRI. Magnetic Resonance in Medicine: An Official Journal of the International Society for Magnetic Resonance in Medicine. 2008 Jul;60(1):146-57.
@@ -82,7 +101,7 @@ k. Cruz G, Qi H, Jaubert O, Kuestner T, Schneider T, Botnar RM, Prieto C. Genera
 
 For a generalized non-rigid motion description:
 
-l. Huttinga NRF, van den Berg CAT, Luijten PR, Sbrizzi A. MR-MOTUS: model-based non-rigid motion estimation for MR-guided radiotherapy using a reference image and minimal k-space data. Phys Med Biol. 2020 Jan 10;65(1):015004. 
+l. Huttinga NRF, van den Berg CAT, Luijten PR, Sbrizzi A. MR-MOTUS: model-based non-rigid motion estimation for MR-guided radiotherapy using a reference image and minimal k-space data. Phys Med Biol. 2020 Jan 10;65(1):015004.
 
 #### Autofocusing
 For an alternative way to perform elastic motion correction without Batchelor's formulation, check out some of the approaches using localized autofocus ideas:
@@ -109,7 +128,7 @@ b. (see above)
 
 s. Balakrishnan G, Zhao A, Sabuncu MR, Guttag J, Dalca AV. VoxelMorph: a learning framework for deformable medical image registration. IEEE transactions on medical imaging. 2019; 38(8), 1788-1800.
 
-t. Yang J, Küstner T, Hu P, Liò P, Qi H. End-to-End Deep Learning of Non-rigid Groupwise Registration and Reconstruction of Dynamic MRI. Front Cardiovasc Med. 2022 Apr 28;9:880186. 
+t. Yang J, Küstner T, Hu P, Liò P, Qi H. End-to-End Deep Learning of Non-rigid Groupwise Registration and Reconstruction of Dynamic MRI. Front Cardiovasc Med. 2022 Apr 28;9:880186.
 
 ### A few slides on the problem of motion in abdominal and cardiac MR
 https://docs.google.com/presentation/d/1iRzvTGj1i-aoXcTtlEKoSmUdF8-5mGSe/edit?usp=sharing&ouid=104740692077922168506&rtpof=true&sd=true
