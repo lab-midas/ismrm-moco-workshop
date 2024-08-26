@@ -5,11 +5,11 @@ channels:
   - defaults
 dependencies:
   - cudatoolkit-dev=11.2
-  - h5py
-  - imageio
+  - h5py=3.1.0
+  - imageio=2.34.2
   - matplotlib==3.2.2
-  - numpy
-  - pandas
+  - numpy=1.24.3
+  - pandas=1.4.4
   - pydicom
   - python=3.8
   - scikit-image
@@ -20,14 +20,14 @@ dependencies:
   - torchaudio
   - torchvision
   - cmake=3.12
-  - pip
-  - setuptools
-  - six
-  - wheel
+  - pip=24.0
+  - setuptools=59.5.0
+  - six=1.15.0
+  - wheel=0.43.0
   - gcc_linux-64=8.5.0
   - gxx_linux-64=8.5.0
-  - jupyter
-  - notebook
+  - jupyter=1.0.0
+  - notebook=7.2.1
   - ipykernel
   - doxygen
   - pip:
@@ -38,6 +38,7 @@ dependencies:
     - voxelmorph
     - runstats
     - pingouin
+    - merlin
     - merlinpy-mri
     - merlinth-mri
     - mkl==2024.0
