@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     apt-get install -y \
         git cmake g++ gcc \
         libhdf5-dev libxml2-dev libxslt1-dev g++-10 gcc-10 \
-        libboost-all-dev libfftw3-dev libcrypt-dev libc6-dev-i386 \
+        libboost-all-dev libfftw3-dev libcrypt-dev libc6-dev-i386 libismrmrd-dev libhdf5-serial-dev libmpfr-dev libgmp3-dev libmpc-dev \
         make liblapacke-dev libpng-dev libopenblas-dev gfortran wget nano dos2unix libnfft3-dev && \
     mkdir -p /opt/code
 #RUN --mount=type=cache,target=/root/.cache/wget \
@@ -76,7 +76,7 @@ ENV CXXFLAGS="-I/usr/include -I/opt/conda/envs/ismrmmocoworkshop/include"
 RUN git clone https://github.com/voxelmorph/voxelmorph.git && \
     git clone https://github.com/mikgroup/espirit-python.git && \
     cp /workspace/espirit-python/espirit.py /workspace && \
-    git clone https://github.com/mrirecon/bart.git /workspace/bart && \
+    #git clone https://github.com/mrirecon/bart.git /workspace/bart && \
     git clone --branch cuda_streams https://github.com/khammernik/gpuNUFFT.git && \
     mkdir -p /workspace/gpuNUFFT/CUDA/build
 
@@ -95,6 +95,21 @@ RUN . /opt/conda/etc/profile.d/conda.sh && \
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate ismrmmocoworkshop && \
     pip install gpuNUFFT 
+
+# Install BART
+# cannot be compiled inside image: parameter name omitted error
+WORKDIR /workspace
+#ENV COMPILE_SPECS="PARALLEL=1 \
+#                  CUDA=0 \
+#                  NON_DETERMINISTIC=1 \
+#                  ISMRMRD=0"
+#RUN cd bart \
+#	printf "%s\n" $COMPILE_SPECS > /workspace/bart/Makefiles/Makefile.local && make 
+# 	echo "CUDA_BASE=/usr/local/cuda-11.2" >> Makefiles/Makefile.local && \
+#	echo "CUDA_LIB=lib64" >> Makefiles/Makefile.local && \
+#	make
+COPY bart.tar.xz /workspace/bart.tar.xz
+RUN tar -xf /workspace/bart.tar.xz
 
 # Install and set up Optox if specified, with appropriate caching
 RUN cp /usr/include/crypt.h /opt/conda/envs/ismrmmocoworkshop/include/crypt.h
@@ -122,9 +137,16 @@ RUN . /opt/conda/etc/profile.d/conda.sh && \
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate ismrmmocoworkshop && \
     pip install pysap-mri==0.4.0 modopt
-
+    
+# Install GPUNufft
 WORKDIR /workspace
+RUN mkdir -p gpuNUFFT/CUDA/build && \
+  cd gpuNUFFT/CUDA/build && \
+  cmake .. -DGEN_MEX_FILES=OFF && \
+  make
+  
 # Install merlin python packages
+WORKDIR /workspace
 RUN git clone https://github.com/midas-tum/merlin.git
 RUN . /opt/conda/etc/profile.d/conda.sh && \
     conda activate ismrmmocoworkshop && \
