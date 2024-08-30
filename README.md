@@ -14,11 +14,18 @@ You have three options to work with this repository: Google Colab, a (pre-built)
 - Solutions: <a href="https://colab.research.google.com/github/lab-midas/ismrm-moco-workshop/blob/master/HandsOn_ISMRM_MoCo_Workshop_solution.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 ### Docker
+Download docker @ https://www.docker.com/products/docker-desktop/ and install.
+
 Either use the pre-built image or build the image yourself. In both cases in the Jupyter notebook you do not need to run the "Installation" steps (all already set up). You only need to execute the "Imports". You may also want to change the `datapath` to `/workspace/data/...`.</br>
 **a) Pre-built image**
+If you're running the Docker Desktop you can open a terminal directly (bottom right), an run the following:
+
 ```
 docker run -it --rm -p 8888:8888 thomaskuestner/ismrm-moco-workshop:v2 /opt/conda/envs/ismrmmocoworkshop/bin/jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
 ```
+
+This will download the image (~30GBs disk) and launch a directory with Jupyter notebooks on an address starting with http://127.0.0.1:8888 (...). Open the address on your browser and select the notebook.
+The installations are already performed so you can start by running the Imports section. Before running the 1st data loading cell, change `datapath = '/content/ismrm-moco-workshop/data/brain_slice.npz'` to `datapath = '/workspace/data/brain_slice.npz'`. 
 
 **b) Build image yourself**
 ```
